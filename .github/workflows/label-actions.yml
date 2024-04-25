@@ -1,17 +1,13 @@
-# Configuration for Label Actions - https://github.com/dessant/label-actions
-
-name: "Label Actions"
-
+jobs:
+  action:
+    runs-on: self-hosted
+    steps:
+    - continue-on-error: true
+      uses: dessant/label-actions@v2
+name: Label Actions
 on:
-  issues:
-    types: labeled
-
+  repository_dispatch:
+    types: trigger-ga___label-actions.yml
 permissions:
   contents: read
   issues: write
-
-jobs:
-  action:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: dessant/label-actions@v2

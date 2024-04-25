@@ -1,29 +1,35 @@
-name: Publish to NPM
-on:
-  release:
-    types: [created]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Read .nvmrc
-        run: echo ::set-output name=NVMRC::$(cat .nvmrc)
-        id: nvm
-      - name: Setup node ${{ steps.nvm.outputs.NVMRC }}
-        uses: actions/setup-node@v3.5.1
-        with:
-          node-version: ${{ steps.nvm.outputs.NVMRC }}
-          registry-url: https://registry.npmjs.org/
-      - name: Setup Node
-        uses: actions/setup-node@v3.5.1
-        with:
-          node-version: '14.x'
-          registry-url: 'https://registry.npmjs.org'
-      - name: Install dependencies and build 🔧
-        run: npm install --force
-      - name: Publish package on NPM 📦
-        run: npm publish ${{ github.event.release.prerelease && '--tag next' || ''}}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN_RNMAPBOX }}
+    - continue-on-error: true
+      name: Checkout
+      uses: actions/checkout@v3
+    - continue-on-error: true
+      id: nvm
+      name: Read .nvmrc
+      run: echo ::set-output name=NVMRC::$(cat .nvmrc)
+    - continue-on-error: true
+      name: Setup node ${{ steps.nvm.outputs.NVMRC }}
+      uses: actions/setup-node@v3.5.1
+      with:
+        node-version: ${{ steps.nvm.outputs.NVMRC }}
+        registry-url: https://registry.npmjs.org/
+    - continue-on-error: true
+      name: Setup Node
+      uses: actions/setup-node@v3.5.1
+      with:
+        node-version: 14.x
+        registry-url: https://registry.npmjs.org
+    - continue-on-error: true
+      name: "Install dependencies and build \U0001F527"
+      run: npm install --force
+    - continue-on-error: true
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH_TOKEN_RNMAPBOX }}
+      name: "Publish package on NPM \U0001F4E6"
+      run: npm publish ${{ github.event.release.prerelease && '--tag next' || ''}}
+name: Publish to NPM
+on:
+  repository_dispatch:
+    types: trigger-ga___publish.yml
